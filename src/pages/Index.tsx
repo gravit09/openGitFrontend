@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Github, Star, GitBranch, Coins, Users, Code, Zap, ArrowRight, CheckCircle } from "lucide-react";
+import { Github, Star, GitBranch, Users, Code, Zap, ArrowRight, CheckCircle, Globe } from "lucide-react";
 
 const Index = () => {
   const featuredRepos = [
@@ -12,7 +12,6 @@ const Index = () => {
       description: "Modern React dashboard with TypeScript and Tailwind CSS",
       language: "TypeScript",
       stars: 1234,
-      bounty: "0.5 SOL",
       tags: ["frontend", "react", "dashboard"]
     },
     {
@@ -21,7 +20,6 @@ const Index = () => {
       description: "Secure multi-chain wallet with DeFi integration",
       language: "Rust",
       stars: 892,
-      bounty: "2.0 SOL", 
       tags: ["blockchain", "wallet", "defi"]
     },
     {
@@ -30,7 +28,6 @@ const Index = () => {
       description: "Intelligent chatbot with natural language processing",
       language: "Python",
       stars: 567,
-      bounty: "1.2 SOL",
       tags: ["ai", "nlp", "chatbot"]
     }
   ];
@@ -42,37 +39,37 @@ const Index = () => {
       description: "Seamlessly connect your existing GitHub repositories"
     },
     {
-      icon: <Coins className="h-8 w-8" />,
-      title: "Solana Bounties",
-      description: "Earn SOL tokens for successful contributions and merges"
+      icon: <Globe className="h-8 w-8" />,
+      title: "Global Community",
+      description: "Connect with developers worldwide and contribute together"
     },
     {
       icon: <Users className="h-8 w-8" />,
       title: "Community Driven",
-      description: "Connect with developers worldwide and build together"
+      description: "Build amazing projects with passionate contributors"
     },
     {
       icon: <Zap className="h-8 w-8" />,
-      title: "Fast Rewards",
-      description: "Get paid instantly when your code gets merged"
+      title: "Learn & Grow",
+      description: "Enhance your skills through real-world contributions"
     }
   ];
 
   const steps = [
     {
       number: "01",
-      title: "Browse Repositories",
-      description: "Explore projects that match your skills and interests"
+      title: "Discover Projects",
+      description: "Explore repositories that match your skills and interests"
     },
     {
       number: "02", 
-      title: "Submit Contributions",
-      description: "Fork, code, and submit pull requests to earn bounties"
+      title: "Start Contributing",
+      description: "Fork, code, and submit pull requests to make an impact"
     },
     {
       number: "03",
-      title: "Get Rewarded",
-      description: "Receive SOL tokens when your code gets merged"
+      title: "Build Your Portfolio",
+      description: "Showcase your contributions and grow your developer profile"
     }
   ];
 
@@ -89,7 +86,7 @@ const Index = () => {
             <nav className="hidden md:flex items-center space-x-8">
               <a href="#repositories" className="text-gray-400 hover:text-gray-200 transition-colors">Repositories</a>
               <a href="#how-it-works" className="text-gray-400 hover:text-gray-200 transition-colors">How it Works</a>
-              <a href="#bounties" className="text-gray-400 hover:text-gray-200 transition-colors">Bounties</a>
+              <a href="#community" className="text-gray-400 hover:text-gray-200 transition-colors">Community</a>
               <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white">
                 Sign In
               </Button>
@@ -106,18 +103,18 @@ const Index = () => {
         <div className="container mx-auto text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent animate-fade-in">
-              Build the Future of
+              Contribute to the Future of
               <br />
               Open Source
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 mb-8 animate-fade-in">
-              Connect contributors with repositories. Earn Solana bounties for successful merges.
+              Connect with projects you love. Contribute for fun, learning, and impact.
               <br />
-              Where code meets rewards.
+              Where passion meets open source collaboration.
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in">
               <Button size="lg" className="bg-white text-black hover:bg-gray-200 text-lg px-8 py-4">
-                Browse Repositories
+                Explore Projects
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white text-lg px-8 py-4">
@@ -140,7 +137,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 text-white">Featured Repositories</h2>
-            <p className="text-xl text-gray-400">Discover projects with active bounties</p>
+            <p className="text-xl text-gray-400">Discover amazing open source projects waiting for contributors</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -153,7 +150,7 @@ const Index = () => {
                       <span className="text-sm text-gray-400">{repo.owner}</span>
                     </div>
                     <Badge variant="secondary" className="bg-gray-600 text-gray-200 border-gray-500">
-                      {repo.bounty}
+                      Open Source
                     </Badge>
                   </div>
                   <CardTitle className="text-white">{repo.name}</CardTitle>
@@ -193,7 +190,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 text-white">How OpenGit Works</h2>
-            <p className="text-xl text-gray-400">Simple steps to start earning with open source</p>
+            <p className="text-xl text-gray-400">Simple steps to start contributing to open source</p>
           </div>
           
           <div className="grid lg:grid-cols-3 gap-12">
@@ -215,7 +212,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 text-white">Why Choose OpenGit?</h2>
-            <p className="text-xl text-gray-400">Built for developers, powered by blockchain</p>
+            <p className="text-xl text-gray-400">Built for developers, powered by community</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -236,37 +233,51 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Bounty System */}
-      <section id="bounties" className="py-20 px-6">
+      {/* Global Community Globe */}
+      <section id="community" className="py-20 px-6">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6 text-white">Solana-Powered Bounties</h2>
+              <h2 className="text-4xl font-bold mb-6 text-white">Global Open Source Community</h2>
               <p className="text-xl text-gray-300 mb-8">
-                Earn real value for your contributions. Repository owners set bounties in SOL tokens, 
-                and contributors get paid instantly when their code gets merged.
+                Join thousands of developers worldwide contributing to open source projects. 
+                Learn, grow, and make an impact while building your portfolio.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-gray-400" />
-                  <span className="text-gray-300">Instant payments on merge</span>
+                  <span className="text-gray-300">Learn from experienced developers</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-gray-400" />
-                  <span className="text-gray-300">Low transaction fees</span>
+                  <span className="text-gray-300">Build your developer portfolio</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-gray-400" />
-                  <span className="text-gray-300">Transparent reward system</span>
+                  <span className="text-gray-300">Connect with like-minded developers</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="h-6 w-6 text-gray-400" />
+                  <span className="text-gray-300">Contribute to meaningful projects</span>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-2xl border border-gray-700">
-              <div className="text-center">
-                <Coins className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-4 text-white">Average Bounty</h3>
-                <div className="text-4xl font-bold text-gray-300 mb-2">1.5 SOL</div>
-                <p className="text-gray-400">per successful contribution</p>
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-2xl border border-gray-700 relative overflow-hidden">
+              <div className="text-center relative z-10">
+                <div className="relative mx-auto mb-6 w-32 h-32">
+                  <Globe className="h-32 w-32 text-gray-400 mx-auto animate-spin" style={{ animationDuration: '20s' }} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-white">Contributors Worldwide</h3>
+                <div className="text-4xl font-bold text-gray-300 mb-2">10,000+</div>
+                <p className="text-gray-400">active open source contributors</p>
+              </div>
+              {/* Background decoration */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-4 left-4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute top-8 right-8 w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute bottom-8 right-4 w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
               </div>
             </div>
           </div>
@@ -278,11 +289,11 @@ const Index = () => {
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6 text-white">Ready to Start Contributing?</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join thousands of developers earning SOL through open source contributions
+            Join thousands of developers making their mark on open source
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white text-black hover:bg-gray-200 text-lg px-8 py-4">
-              Browse Repositories
+              Explore Projects
               <GitBranch className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white text-lg px-8 py-4">
@@ -303,15 +314,15 @@ const Index = () => {
                 <span className="text-lg font-bold text-white">OpenGit</span>
               </div>
               <p className="text-gray-400">
-                Connecting developers worldwide through incentivized open source collaboration.
+                Connecting developers worldwide through open source collaboration and learning.
               </p>
             </div>
             <div>
               <h4 className="font-bold mb-4 text-white">Platform</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-gray-200 transition-colors">Browse Repos</a></li>
+                <li><a href="#" className="hover:text-gray-200 transition-colors">Browse Projects</a></li>
                 <li><a href="#" className="hover:text-gray-200 transition-colors">List Repository</a></li>
-                <li><a href="#" className="hover:text-gray-200 transition-colors">Bounties</a></li>
+                <li><a href="#" className="hover:text-gray-200 transition-colors">Community</a></li>
               </ul>
             </div>
             <div>
@@ -332,7 +343,7 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 OpenGit. All rights reserved. Powered by Solana.</p>
+            <p>&copy; 2024 OpenGit. All rights reserved. Powered by the open source community.</p>
           </div>
         </div>
       </footer>
