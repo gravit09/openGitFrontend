@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +51,11 @@ const Index = () => {
       icon: <Zap className="h-8 w-8" />,
       title: "Learn & Grow",
       description: "Enhance your skills through real-world contributions"
+    },
+    {
+      icon: <Badge className="h-8 w-8" />,
+      title: "Solana Bounties",
+      description: "Earn Solana-based rewards for successful contributions and merged pull requests"
     }
   ];
 
