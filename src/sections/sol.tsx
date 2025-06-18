@@ -6,8 +6,9 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, Award, Users, GitBranch, CheckCircle } from "lucide-react";
+import { Award, Users, GitBranch, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import solanaImage from "/solanaLogo.png";
 
 function sol() {
   const solanaBounties = [
@@ -53,8 +54,8 @@ function sol() {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <DollarSign className="h-8 w-8 text-purple-400" />
-            <h2 className="text-4xl font-bold text-white">Solana Bounties</h2>
+            <img className="w-17 h-8" src={solanaImage} />
+            <h2 className="text-4xl font-bold text-white">Bounties</h2>
           </div>
           <p className="text-xl text-gray-300">
             Global Open Source Contribution Rewards
@@ -101,7 +102,7 @@ function sol() {
                     }
                     className={
                       bounty.status === "Active"
-                        ? "bg-purple-600 text-white"
+                        ? "bg-purple-400 text-white"
                         : "bg-gray-600 text-gray-200"
                     }
                   >
@@ -159,7 +160,7 @@ function sol() {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-purple-600 text-white hover:bg-purple-700">
+                  <Button className="w-full bg-solana text-white">
                     {bounty.status === "Active"
                       ? "Start Contributing"
                       : "View Results"}
