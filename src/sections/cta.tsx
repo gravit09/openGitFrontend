@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { GitBranch, Code } from "lucide-react";
-import React from "react";
 
 function cta() {
   return (

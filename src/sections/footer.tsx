@@ -79,7 +79,7 @@ function footer() {
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2024 OpenGit. All rights reserved. Powered by the open source
+            &copy; 2025 OpenGit. All rights reserved. Powered by the open source
             community.
           </p>
         </div>
