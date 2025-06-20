@@ -1,48 +1,78 @@
-import { Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 
-function navbar() {
+function Navbar() {
   return (
-    <header className="border-b border-gray-800 bg-black/90 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Github className="h-8 w-8 text-gray-300" />
-            <span className="text-xl font-bold text-white">OpenGit</span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#repositories"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              Repositories
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              How it Works
-            </a>
-            <a
-              href="#community"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              Community
-            </a>
-            <Button
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-            >
-              Sign In
-            </Button>
-            <Button className="bg-white text-black hover:bg-gray-200">
-              Get Started
-            </Button>
-          </nav>
+    <header className="bg-black py-4 px-6 fixed w-full top-0 z-50">
+      <div className="container mx-auto flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold text-white">
+          OpenGit
+        </Link>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <Link 
+            to="/" 
+            className="text-gray-300 hover:text-white transition-colors"
+          >
+            Home
+          </Link>
+          <Link 
+            to="/explore" 
+            className="text-gray-300 hover:text-white transition-colors"
+          >
+            Explore
+          </Link>
+          <Link 
+            to="/repositories" 
+            className="text-gray-300 hover:text-white transition-colors"
+          >
+            Repositories
+          </Link>
+          <a href="#" className="text-gray-300 hover:text-white transition-colors">
+            How it Works
+          </a>
+          <a href="#" className="text-gray-300 hover:text-white transition-colors">
+            About
+          </a>
         </div>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" className="md:hidden">
+              <Menu className="h-5 w-5 text-white" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="bg-black text-white">
+            <SheetHeader>
+              <SheetTitle>OpenGit</SheetTitle>
+              <SheetDescription>
+                Manage your account preferences, set email preferences, and more.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <Link to="/" className="text-gray-300 hover:text-white transition-colors block py-2">
+                Home
+              </Link>
+              <Link to="/explore" className="text-gray-300 hover:text-white transition-colors block py-2">
+                Explore
+              </Link>
+              <Link to="/repositories" className="text-gray-300 hover:text-white transition-colors block py-2">
+                Repositories
+              </Link>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors block py-2">
+                How it Works
+              </a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors block py-2">
+                About
+              </a>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
 }
 
-export default navbar;
+export default Navbar;
