@@ -1,5 +1,4 @@
 import Footer from "@/sections/footer";
-import How from "@/sections/how";
 import Sol from "@/sections/sol";
 import Cta from "@/sections/cta";
 import Stats from "@/sections/stats";
@@ -21,8 +20,6 @@ const Index = () => {
       <Sol />
       {/* Global Impact Stats */}
       <Stats />
-      {/* How it Works */}
-      <How />
       {/* Features */}
       <FeaturesSection />
       {/* CTA Section */}

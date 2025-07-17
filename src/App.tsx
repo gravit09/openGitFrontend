@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ExplorePage from "./pages/explore";
-
+import { ProtectedRoute } from "./components/custom/ProtectedRoute";
+import SignInPage from "./components/custom/SignInPage";
+import SignUpPage from "./components/custom/SignUpPage";
+import ListRepoPage from "./pages/listRepo";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -17,8 +20,25 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="*" element={<NotFound />} />
-          <Route path="/explore" element={<ExplorePage />} />
+          <Route
+            path="/explore"
+            element={
+              <ProtectedRoute>
+                <ExplorePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dash"
+            element={
+              <ProtectedRoute>
+                <ListRepoPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

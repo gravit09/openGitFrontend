@@ -1,44 +1,27 @@
-import { Github } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 function navbar() {
   return (
-    <header className="border-b border-gray-800 bg-black/90 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
+    <header className=" inset-x-0 z-30 sticky top-0 mx-auto w-full max-w-screen-md border border-gray-400 bg-white/80 py-2 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg">
+      <div className="px-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Github className="h-8 w-8 text-gray-300" />
-            <span className="text-xl font-bold text-white">OpenGit</span>
+          <div className="flex shrink-0">
+            <h3 className="text-2xl text-bold text-gray-800">OpenGit</h3>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#repositories"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
+          <div className="flex items-center justify-end gap-3">
+            <Link
+              className="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex"
+              to="/signin"
             >
-              Repositories
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
+              Sign in
+            </Link>
+            <Link
+              className="inline-flex items-center justify-center rounded-xl bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              to="/signup"
             >
-              How it Works
-            </a>
-            <a
-              href="#community"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              Community
-            </a>
-            <Button
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-            >
-              Sign In
-            </Button>
-            <Button className="bg-white text-black hover:bg-gray-200">
-              Get Started
-            </Button>
-          </nav>
+              Sign up
+            </Link>
+          </div>
         </div>
       </div>
     </header>

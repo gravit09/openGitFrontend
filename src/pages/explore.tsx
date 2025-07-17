@@ -21,7 +21,6 @@ import {
   Search,
   Star,
   GitFork,
-  Eye,
   DollarSign,
   Users,
   AlertCircle,
@@ -31,8 +30,21 @@ import {
   Coins,
   Moon,
   Sun,
+  LogOut,
+  User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect } from "react";
+import { useUser, useAuth } from "@clerk/clerk-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -53,22 +65,111 @@ function ThemeToggle() {
   );
 }
 
-// Mock data for repositories
-import { repositories, difficulties, languages, skills } from "./sample.json";
+function UserMenu() {
+  const { user } = useUser();
+  const { isSignedIn, signOut } = useAuth();
+
+  if (!isSignedIn || !user) {
+    return null;
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
+            <AvatarFallback>
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {user.fullName || "User"}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.primaryEmailAddress?.emailAddress}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+import { Link } from "react-router-dom";
 
 export default function ExplorePage() {
+  const { getToken } = useAuth();
+  const [repositories, setRepositories] = useState<any[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [difficulties, setDifficulties] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [sortBy, setSortBy] = useState("stars");
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedActivity, setSelectedActivity] = useState("all");
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      setLoading(true);
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          "http://localhost:4000/api/repo/listrepo",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const repos = data.repos || [];
+          setRepositories(repos);
+          const allSkills = new Set<string>();
+          const allLanguages = new Set<string>();
+          const allDifficulties = new Set<string>();
+          repos.forEach((repo: any) => {
+            (repo.topics || []).forEach((topic: string) =>
+              allSkills.add(topic)
+            );
+            (repo.language || []).forEach
+              ? repo.language.forEach((lang: string) => allLanguages.add(lang))
+              : allLanguages.add(repo.language);
+            if (repo.difficulty) allDifficulties.add(repo.difficulty);
+          });
+          setSkills(Array.from(allSkills));
+          setLanguages(Array.from(allLanguages));
+          setDifficulties(Array.from(allDifficulties));
+        }
+      } catch (error) {
+        console.error("Error fetching repositories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRepos();
+  }, [getToken]);
 
   const filteredRepos = repositories.filter((repo) => {
     const matchesSearch =
-      repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.topics.some((topic) =>
+      repo.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      repo.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (repo.topics || []).some((topic: string) =>
         topic.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
@@ -76,32 +177,57 @@ export default function ExplorePage() {
       selectedSkills.length === 0 ||
       selectedSkills.some(
         (skill) =>
-          repo.topics.some((topic) =>
+          (repo.topics || []).some((topic: string) =>
             topic.toLowerCase().includes(skill.toLowerCase())
-          ) || repo.language.toLowerCase().includes(skill.toLowerCase())
+          ) ||
+          (Array.isArray(repo.language)
+            ? repo.language
+                .map((l: string) => l.toLowerCase())
+                .includes(skill.toLowerCase())
+            : (repo.language || "").toLowerCase().includes(skill.toLowerCase()))
       );
 
     const matchesDifficulty =
-      !selectedDifficulty || repo.difficulty === selectedDifficulty;
+      !selectedDifficulty ||
+      selectedDifficulty === "all" ||
+      repo.difficulty === selectedDifficulty;
     const matchesLanguage =
-      !selectedLanguage || repo.language === selectedLanguage;
+      !selectedLanguage ||
+      selectedLanguage === "all" ||
+      (Array.isArray(repo.language)
+        ? repo.language.includes(selectedLanguage)
+        : repo.language === selectedLanguage);
+
+    const matchesActivity =
+      !selectedActivity ||
+      selectedActivity === "all" ||
+      (selectedActivity === "high" && repo.recentCommits >= 20) ||
+      (selectedActivity === "medium" &&
+        repo.recentCommits >= 5 &&
+        repo.recentCommits < 20) ||
+      (selectedActivity === "low" && repo.recentCommits < 5);
 
     return (
-      matchesSearch && matchesSkills && matchesDifficulty && matchesLanguage
+      matchesSearch &&
+      matchesSkills &&
+      matchesDifficulty &&
+      matchesLanguage &&
+      matchesActivity
     );
   });
 
   const sortedRepos = [...filteredRepos].sort((a, b) => {
     switch (sortBy) {
       case "stars":
-        return b.stars - a.stars;
+        return (b.stars || 0) - (a.stars || 0);
       case "bounties":
-        return b.totalBountyAmount - a.totalBountyAmount;
+        return (b.totalBountyAmount || 0) - (a.totalBountyAmount || 0);
       case "issues":
-        return b.openIssues - a.openIssues;
+        return (b.openIssues || 0) - (a.openIssues || 0);
       case "updated":
         return (
-          new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+          new Date(b.lastUpdated || b.updatedAt || b.createdAt || 0).getTime() -
+          new Date(a.lastUpdated || a.updatedAt || a.createdAt || 0).getTime()
         );
       default:
         return 0;
@@ -127,7 +253,15 @@ export default function ExplorePage() {
             in SOL
           </p>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          <div className="mr-0 border border-white px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg">
+            <Link to="/dash" className="text-white font-semibold text-sm">
+              Dashboard
+            </Link>
+          </div>
+          <ThemeToggle />
+          <UserMenu />
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -189,15 +323,26 @@ export default function ExplorePage() {
               ))}
             </SelectContent>
           </Select>
-        </div>
 
+          <Select value={selectedActivity} onValueChange={setSelectedActivity}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Activity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Activity</SelectItem>
+              <SelectItem value="high">High Activity</SelectItem>
+              <SelectItem value="medium">Medium Activity</SelectItem>
+              <SelectItem value="low">Low Activity</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         {/* Skills Filter */}
         <div>
           <h3 className="text-sm font-medium mb-2">Filter by Skills:</h3>
           <div className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
+            {skills.map((skill, idx) => (
               <Badge
-                key={skill}
+                key={`skill-filter-${skill}-${idx}`}
                 variant={selectedSkills.includes(skill) ? "default" : "outline"}
                 className="cursor-pointer hover:bg-primary/80"
                 onClick={() => toggleSkill(skill)}
@@ -211,7 +356,8 @@ export default function ExplorePage() {
         {/* Active Filters */}
         {(selectedSkills.length > 0 ||
           selectedDifficulty ||
-          selectedLanguage) && (
+          selectedLanguage ||
+          selectedActivity !== "all") && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">
               Active filters:
@@ -244,6 +390,15 @@ export default function ExplorePage() {
                 {selectedLanguage} ×
               </Badge>
             )}
+            {selectedActivity !== "all" && (
+              <Badge
+                variant="secondary"
+                className="cursor-pointer"
+                onClick={() => setSelectedActivity("all")}
+              >
+                {selectedActivity} ×
+              </Badge>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -251,6 +406,7 @@ export default function ExplorePage() {
                 setSelectedSkills([]);
                 setSelectedDifficulty("");
                 setSelectedLanguage("");
+                setSelectedActivity("all");
               }}
             >
               Clear all
@@ -290,6 +446,20 @@ export default function ExplorePage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Score-based tag */}
+              <div className="flex gap-2 mb-2">
+                {typeof repo.score === "number" && (
+                  <Badge variant="secondary" className="text-xs">
+                    Difficulty Rating: {repo.score}
+                  </Badge>
+                )}
+                {repo.difficulty && (
+                  <Badge variant="outline" className="text-xs">
+                    {repo.difficulty}
+                  </Badge>
+                )}
+              </div>
+
               {/* Stats */}
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -300,34 +470,29 @@ export default function ExplorePage() {
                   <GitFork className="h-3 w-3" />
                   {repo.forks}
                 </div>
-                <div className="flex items-center gap-1">
-                  <Eye className="h-3 w-3" />
-                  {repo.watchers}
-                </div>
               </div>
 
               {/* Language and Topics */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 dark:bg-blue-400"></div>
-                  <span className="text-sm">{repo.language}</span>
-                  <span className="text-xs text-muted-foreground">
-                    • {repo.lastUpdated}
-                  </span>
-                </div>
                 <div className="flex flex-wrap gap-1">
-                  {repo.topics.slice(0, 3).map((topic) => (
+                  {repo.topics.slice(0, 6).map((topic) => (
                     <Badge key={topic} variant="outline" className="text-xs">
                       {topic}
                     </Badge>
                   ))}
-                  {repo.topics.length > 3 && (
+                  {repo.topics.length > 6 && (
                     <Badge variant="outline" className="text-xs">
-                      +{repo.topics.length - 3}
+                      +{repo.topics.length - 6}
                     </Badge>
                   )}
                 </div>
               </div>
+
+              {repo.recentCommits !== undefined && (
+                <Badge variant="outline" className="text-xs">
+                  {repo.recentCommits} recent commits
+                </Badge>
+              )}
 
               <Separator />
 
@@ -341,7 +506,7 @@ export default function ExplorePage() {
                     </span>
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    {repo.goodFirstIssues} good first issues
+                    {repo.issues} open issues
                   </Badge>
                 </div>
 
@@ -372,13 +537,25 @@ export default function ExplorePage() {
 
               {/* Actions */}
               <div className="flex gap-2">
-                <Button className="flex-1" size="sm">
+                <a
+                  href={repo.githubUrl || repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-primary text-white hover:bg-gray-400 bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  style={{ textAlign: "center", textDecoration: "none" }}
+                >
                   View Repository
                   <ExternalLink className="h-3 w-3 ml-1" />
-                </Button>
-                <Button variant="outline" size="sm">
+                </a>
+                <a
+                  href={`${repo.githubUrl || repo.url}/issues`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md border border-gray-400 text-gray-200 bg-transparent hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  style={{ textAlign: "center", textDecoration: "none" }}
+                >
                   View Issues
-                </Button>
+                </a>
               </div>
             </CardContent>
           </Card>
@@ -402,6 +579,7 @@ export default function ExplorePage() {
               setSelectedSkills([]);
               setSelectedDifficulty("");
               setSelectedLanguage("");
+              setSelectedActivity("all");
             }}
           >
             Clear all filters
