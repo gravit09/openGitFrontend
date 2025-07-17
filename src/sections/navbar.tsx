@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function navbar() {
+function Navbar() {
   return (
     <header className=" inset-x-0 z-30 sticky top-0 mx-auto w-full max-w-screen-md border border-gray-400 bg-white/80 py-2 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg">
       <div className="px-4">
@@ -28,4 +28,4 @@ function navbar() {
   );
 }
 
-export default navbar;
+export default Navbar;
