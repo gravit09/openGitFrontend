@@ -1,11 +1,23 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Github, Star, GitFork, Trash2, Plus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/sections/navbar";
@@ -33,7 +45,7 @@ const Repositories = () => {
       forks: 24000,
       language: "JavaScript",
       url: "https://github.com/facebook/react-native",
-      dateAdded: "2024-01-15"
+      dateAdded: "2024-01-15",
     },
     {
       id: "2",
@@ -43,7 +55,7 @@ const Repositories = () => {
       forks: 74000,
       language: "Python",
       url: "https://github.com/tensorflow/tensorflow",
-      dateAdded: "2024-01-20"
+      dateAdded: "2024-01-20",
     },
     {
       id: "3",
@@ -53,8 +65,8 @@ const Repositories = () => {
       forks: 39000,
       language: "Go",
       url: "https://github.com/kubernetes/kubernetes",
-      dateAdded: "2024-01-25"
-    }
+      dateAdded: "2024-01-25",
+    },
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,21 +74,19 @@ const Repositories = () => {
     name: "",
     description: "",
     url: "",
-    language: ""
+    language: "",
   });
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const filteredRepositories = repositories.filter(repo =>
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    repo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    repo.language.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Remove all frontend filtering logic (filteredRepositories, etc.)
+  // If you want to support backend filtering, implement fetch logic similar to listRepo.tsx
 
   const handleRemoveRepository = (id: string) => {
-    setRepositories(repositories.filter(repo => repo.id !== id));
+    setRepositories(repositories.filter((repo) => repo.id !== id));
     toast({
       title: "Repository Removed",
-      description: "The repository has been successfully removed from the platform.",
+      description:
+        "The repository has been successfully removed from the platform.",
     });
   };
 
@@ -85,7 +95,7 @@ const Repositories = () => {
       toast({
         title: "Error",
         description: "Please fill in at least the repository name and URL.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -98,30 +108,33 @@ const Repositories = () => {
       forks: Math.floor(Math.random() * 500) + 50,
       language: newRepo.language || "Unknown",
       url: newRepo.url,
-      dateAdded: new Date().toISOString().split('T')[0]
+      dateAdded: new Date().toISOString().split("T")[0],
     };
 
     setRepositories([...repositories, repository]);
     setNewRepo({ name: "", description: "", url: "", language: "" });
     setIsAddDialogOpen(false);
-    
+
     toast({
       title: "Repository Added",
-      description: "The repository has been successfully added to the platform.",
+      description:
+        "The repository has been successfully added to the platform.",
     });
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      
+
       <div className="container mx-auto px-6 py-12">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-4">Repository Dashboard</h1>
-            <p className="text-gray-400">Manage open source repositories on the platform</p>
+            <p className="text-gray-400">
+              Manage open source repositories on the platform
+            </p>
           </div>
-          
+
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-purple-600 hover:bg-purple-700">
@@ -131,50 +144,71 @@ const Repositories = () => {
             </DialogTrigger>
             <DialogContent className="bg-gray-900 border-gray-700">
               <DialogHeader>
-                <DialogTitle className="text-white">Add New Repository</DialogTitle>
+                <DialogTitle className="text-white">
+                  Add New Repository
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="name" className="text-white">Repository Name *</Label>
+                  <Label htmlFor="name" className="text-white">
+                    Repository Name *
+                  </Label>
                   <Input
                     id="name"
                     value={newRepo.name}
-                    onChange={(e) => setNewRepo({ ...newRepo, name: e.target.value })}
+                    onChange={(e) =>
+                      setNewRepo({ ...newRepo, name: e.target.value })
+                    }
                     className="bg-gray-800 border-gray-600 text-white"
                     placeholder="e.g., react"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="url" className="text-white">GitHub URL *</Label>
+                  <Label htmlFor="url" className="text-white">
+                    GitHub URL *
+                  </Label>
                   <Input
                     id="url"
                     value={newRepo.url}
-                    onChange={(e) => setNewRepo({ ...newRepo, url: e.target.value })}
+                    onChange={(e) =>
+                      setNewRepo({ ...newRepo, url: e.target.value })
+                    }
                     className="bg-gray-800 border-gray-600 text-white"
                     placeholder="https://github.com/user/repo"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description" className="text-white">Description</Label>
+                  <Label htmlFor="description" className="text-white">
+                    Description
+                  </Label>
                   <Input
                     id="description"
                     value={newRepo.description}
-                    onChange={(e) => setNewRepo({ ...newRepo, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewRepo({ ...newRepo, description: e.target.value })
+                    }
                     className="bg-gray-800 border-gray-600 text-white"
                     placeholder="Brief description of the repository"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="language" className="text-white">Primary Language</Label>
+                  <Label htmlFor="language" className="text-white">
+                    Primary Language
+                  </Label>
                   <Input
                     id="language"
                     value={newRepo.language}
-                    onChange={(e) => setNewRepo({ ...newRepo, language: e.target.value })}
+                    onChange={(e) =>
+                      setNewRepo({ ...newRepo, language: e.target.value })
+                    }
                     className="bg-gray-800 border-gray-600 text-white"
                     placeholder="e.g., JavaScript, Python, Go"
                   />
                 </div>
-                <Button onClick={handleAddRepository} className="w-full bg-purple-600 hover:bg-purple-700">
+                <Button
+                  onClick={handleAddRepository}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                >
                   Add Repository
                 </Button>
               </div>
@@ -202,7 +236,7 @@ const Repositories = () => {
         <Card className="bg-gray-900/30 border-gray-700">
           <CardHeader>
             <CardTitle className="text-white">
-              Listed Repositories ({filteredRepositories.length})
+              Listed Repositories ({repositories.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -217,17 +251,21 @@ const Repositories = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRepositories.map((repo) => (
+                {repositories.map((repo) => (
                   <TableRow key={repo.id} className="border-gray-700">
                     <TableCell>
                       <div className="flex items-start gap-3">
                         <Github className="h-5 w-5 text-gray-400 mt-1" />
                         <div>
-                          <h3 className="font-semibold text-white">{repo.name}</h3>
-                          <p className="text-sm text-gray-400 max-w-md">{repo.description}</p>
-                          <a 
-                            href={repo.url} 
-                            target="_blank" 
+                          <h3 className="font-semibold text-white">
+                            {repo.name}
+                          </h3>
+                          <p className="text-sm text-gray-400 max-w-md">
+                            {repo.description}
+                          </p>
+                          <a
+                            href={repo.url}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-purple-400 hover:text-purple-300"
                           >
@@ -270,8 +308,8 @@ const Repositories = () => {
                 ))}
               </TableBody>
             </Table>
-            
-            {filteredRepositories.length === 0 && (
+
+            {repositories.length === 0 && (
               <div className="text-center py-8 text-gray-400">
                 No repositories found matching your search criteria.
               </div>

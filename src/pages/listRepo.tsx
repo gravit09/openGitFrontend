@@ -47,8 +47,11 @@ const Repositories = () => {
     const fetchRepositories = async () => {
       try {
         const token = await getToken();
+        // Build query string from searchTerm
+        const params = new URLSearchParams();
+        if (searchTerm) params.append("search", searchTerm);
         const response = await fetch(
-          "http://localhost:4000/api/repo/listrepo",
+          `http://localhost:4000/api/repo/listrepo?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -84,7 +87,7 @@ const Repositories = () => {
     };
 
     fetchRepositories();
-  }, [getToken, toast]);
+  }, [getToken, toast, searchTerm]);
 
   const [newRepo, setNewRepo] = useState({
     name: "",
@@ -95,11 +98,8 @@ const Repositories = () => {
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const filteredRepositories = repositories.filter(
-    (repo) =>
-      repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      repo.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Remove all frontend filtering logic (filteredRepositories, etc.)
+  // Use repositories directly for rendering
 
   const handleRemoveRepository = async (id: string) => {
     try {
@@ -301,7 +301,7 @@ const Repositories = () => {
         <Card className="bg-gray-900/30 border-gray-700">
           <CardHeader>
             <CardTitle className="text-white">
-              Listed Repositories ({filteredRepositories.length})
+              Listed Repositories ({repositories.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -325,7 +325,7 @@ const Repositories = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredRepositories.map((repo) => (
+                    {repositories.map((repo) => (
                       <TableRow key={repo.id} className="border-gray-700">
                         <TableCell>
                           <div className="flex items-start gap-3">
@@ -378,7 +378,7 @@ const Repositories = () => {
                   </TableBody>
                 </Table>
 
-                {filteredRepositories.length === 0 && (
+                {repositories.length === 0 && (
                   <div className="text-center py-8 text-gray-400">
                     No repositories found matching your search criteria.
                   </div>

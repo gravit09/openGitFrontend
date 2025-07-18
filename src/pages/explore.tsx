@@ -128,8 +128,20 @@ export default function ExplorePage() {
       setLoading(true);
       try {
         const token = await getToken();
+        // Build query string from filter state
+        const params = new URLSearchParams();
+        if (searchQuery) params.append("search", searchQuery);
+        if (selectedSkills.length > 0)
+          params.append("skills", selectedSkills.join(","));
+        if (selectedDifficulty && selectedDifficulty !== "all")
+          params.append("difficulty", selectedDifficulty);
+        if (selectedLanguage && selectedLanguage !== "all")
+          params.append("language", selectedLanguage);
+        if (selectedActivity && selectedActivity !== "all")
+          params.append("activity", selectedActivity);
+        if (sortBy) params.append("sort", sortBy);
         const response = await fetch(
-          "http://localhost:4000/api/repo/listrepo",
+          `http://localhost:4000/api/repo/listrepo?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -163,76 +175,18 @@ export default function ExplorePage() {
       }
     };
     fetchRepos();
-  }, [getToken]);
+  }, [
+    getToken,
+    searchQuery,
+    selectedSkills,
+    selectedDifficulty,
+    selectedLanguage,
+    selectedActivity,
+    sortBy,
+  ]);
 
-  const filteredRepos = repositories.filter((repo) => {
-    const matchesSearch =
-      repo.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (repo.topics || []).some((topic: string) =>
-        topic.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-
-    const matchesSkills =
-      selectedSkills.length === 0 ||
-      selectedSkills.some(
-        (skill) =>
-          (repo.topics || []).some((topic: string) =>
-            topic.toLowerCase().includes(skill.toLowerCase())
-          ) ||
-          (Array.isArray(repo.language)
-            ? repo.language
-                .map((l: string) => l.toLowerCase())
-                .includes(skill.toLowerCase())
-            : (repo.language || "").toLowerCase().includes(skill.toLowerCase()))
-      );
-
-    const matchesDifficulty =
-      !selectedDifficulty ||
-      selectedDifficulty === "all" ||
-      repo.difficulty === selectedDifficulty;
-    const matchesLanguage =
-      !selectedLanguage ||
-      selectedLanguage === "all" ||
-      (Array.isArray(repo.language)
-        ? repo.language.includes(selectedLanguage)
-        : repo.language === selectedLanguage);
-
-    const matchesActivity =
-      !selectedActivity ||
-      selectedActivity === "all" ||
-      (selectedActivity === "high" && repo.recentCommits >= 20) ||
-      (selectedActivity === "medium" &&
-        repo.recentCommits >= 5 &&
-        repo.recentCommits < 20) ||
-      (selectedActivity === "low" && repo.recentCommits < 5);
-
-    return (
-      matchesSearch &&
-      matchesSkills &&
-      matchesDifficulty &&
-      matchesLanguage &&
-      matchesActivity
-    );
-  });
-
-  const sortedRepos = [...filteredRepos].sort((a, b) => {
-    switch (sortBy) {
-      case "stars":
-        return (b.stars || 0) - (a.stars || 0);
-      case "bounties":
-        return (b.totalBountyAmount || 0) - (a.totalBountyAmount || 0);
-      case "issues":
-        return (b.openIssues || 0) - (a.openIssues || 0);
-      case "updated":
-        return (
-          new Date(b.lastUpdated || b.updatedAt || b.createdAt || 0).getTime() -
-          new Date(a.lastUpdated || a.updatedAt || a.createdAt || 0).getTime()
-        );
-      default:
-        return 0;
-    }
-  });
+  // Remove all frontend filtering and sorting logic (filteredRepos, sortedRepos, etc.)
+  // Use repositories directly for rendering
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -403,6 +357,7 @@ export default function ExplorePage() {
               variant="ghost"
               size="sm"
               onClick={() => {
+                setSearchQuery("");
                 setSelectedSkills([]);
                 setSelectedDifficulty("");
                 setSelectedLanguage("");
@@ -418,13 +373,13 @@ export default function ExplorePage() {
       {/* Results Count */}
       <div className="mb-6">
         <p className="text-sm text-muted-foreground">
-          Showing {sortedRepos.length} of {repositories.length} repositories
+          Showing {repositories.length} of {repositories.length} repositories
         </p>
       </div>
 
       {/* Repository Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {sortedRepos.map((repo) => (
+        {repositories.map((repo) => (
           <Card
             key={repo.id}
             className="hover:shadow-lg transition-shadow bg-card border-border/110 backdrop-blur supports-[backdrop-filter]:bg-card/95"
@@ -563,7 +518,7 @@ export default function ExplorePage() {
       </div>
 
       {/* Empty State */}
-      {sortedRepos.length === 0 && (
+      {repositories.length === 0 && (
         <div className="text-center py-12">
           <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2 text-foreground">
