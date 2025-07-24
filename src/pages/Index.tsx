@@ -6,8 +6,24 @@ import { FeaturesSection } from "@/sections/features";
 import Featured from "@/sections/featured";
 import Navbar from "@/sections/navbar";
 import Hero from "@/sections/hero";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect } from "react";
 
-const Index = () => {
+export default function Index() {
+  const { isSignedIn, getToken } = useAuth();
+  useEffect(() => {
+    const saveGithubData = async () => {
+      if (isSignedIn) {
+        const token = await getToken();
+        await fetch("http://localhost:4000/api/repo/save-user-github-data", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    };
+    saveGithubData();
+  }, [isSignedIn, getToken]);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -28,6 +44,4 @@ const Index = () => {
       <Footer />
     </div>
   );
-};
-
-export default Index;
+}

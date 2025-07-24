@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/custom/Navbar";
 import {
   Card,
   CardContent,
@@ -108,6 +109,19 @@ function UserMenu() {
 
 import { Link } from "react-router-dom";
 
+function getDifficultyBadgeClass(difficulty: string) {
+  switch (difficulty?.toLowerCase()) {
+    case "easy":
+      return "bg-green-600 text-white";
+    case "intermediate":
+      return "bg-yellow-500 text-white";
+    case "hard":
+      return "bg-red-600 text-white";
+    default:
+      return "bg-green-500 text-white";
+  }
+}
+
 export default function ExplorePage() {
   const { getToken } = useAuth();
   const [repositories, setRepositories] = useState<any[]>([]);
@@ -128,7 +142,6 @@ export default function ExplorePage() {
       setLoading(true);
       try {
         const token = await getToken();
-        // Build query string from filter state
         const params = new URLSearchParams();
         if (searchQuery) params.append("search", searchQuery);
         if (selectedSkills.length > 0)
@@ -185,9 +198,6 @@ export default function ExplorePage() {
     sortBy,
   ]);
 
-  // Remove all frontend filtering and sorting logic (filteredRepos, sortedRepos, etc.)
-  // Use repositories directly for rendering
-
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
       prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
@@ -195,9 +205,9 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl bg-background text-foreground min-h-screen">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+    <div className="container mx-auto px-4 py-14 max-w-7xl bg-background text-foreground min-h-screen">
+      <Navbar />
+      <div className="mb-8 mt-12 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2 text-foreground">
             Explore Open Source Projects
@@ -208,17 +218,11 @@ export default function ExplorePage() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="mr-0 border border-white px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg">
-            <Link to="/dash" className="text-white font-semibold text-sm">
-              Dashboard
-            </Link>
-          </div>
           <ThemeToggle />
           <UserMenu />
         </div>
       </div>
 
-      {/* Search and Filters */}
       <div className="mb-8 space-y-4">
         <div className="flex gap-4">
           <div className="relative flex-1">
@@ -395,7 +399,7 @@ export default function ExplorePage() {
                     {repo.description}
                   </CardDescription>
                 </div>
-                <Badge className="dark:text-white bg-green-700">
+                <Badge className={getDifficultyBadgeClass(repo.difficulty)}>
                   {repo.difficulty}
                 </Badge>
               </div>
@@ -496,7 +500,7 @@ export default function ExplorePage() {
                   href={repo.githubUrl || repo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-primary text-white hover:bg-gray-400 bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md  text-white hover:bg-gray-400 bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   style={{ textAlign: "center", textDecoration: "none" }}
                 >
                   View Repository

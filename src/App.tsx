@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./components/custom/ProtectedRoute";
 import SignInPage from "./components/custom/SignInPage";
 import SignUpPage from "./components/custom/SignUpPage";
 import ListRepoPage from "./pages/listRepo";
+import TopContributorsPage from "./pages/TopContributors";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -36,6 +37,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ListRepoPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/top-contributors"
+            element={
+              <ProtectedRoute>
+                <TopContributorsPage />
               </ProtectedRoute>
             }
           />
