@@ -109,33 +109,23 @@ function UserMenu() {
 
 import { Link } from "react-router-dom";
 
-function getDifficultyBadgeClass(difficulty: string) {
-  switch (difficulty?.toLowerCase()) {
-    case "easy":
-      return "bg-green-600 text-white";
-    case "intermediate":
-      return "bg-yellow-500 text-white";
-    case "hard":
-      return "bg-red-600 text-white";
-    default:
-      return "bg-green-500 text-white";
-  }
-}
-
 export default function ExplorePage() {
   const { getToken } = useAuth();
   const [repositories, setRepositories] = useState<any[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
-  const [difficulties, setDifficulties] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [sortBy, setSortBy] = useState("stars");
   const [activeTab, setActiveTab] = useState("all");
   const [selectedActivity, setSelectedActivity] = useState("all");
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -143,11 +133,11 @@ export default function ExplorePage() {
       try {
         const token = await getToken();
         const params = new URLSearchParams();
+        params.append("page", String(page));
+        params.append("pageSize", String(pageSize));
         if (searchQuery) params.append("search", searchQuery);
         if (selectedSkills.length > 0)
           params.append("skills", selectedSkills.join(","));
-        if (selectedDifficulty && selectedDifficulty !== "all")
-          params.append("difficulty", selectedDifficulty);
         if (selectedLanguage && selectedLanguage !== "all")
           params.append("language", selectedLanguage);
         if (selectedActivity && selectedActivity !== "all")
@@ -165,9 +155,9 @@ export default function ExplorePage() {
           const data = await response.json();
           const repos = data.repos || [];
           setRepositories(repos);
+          setTotalPages(data.totalPages || 1);
           const allSkills = new Set<string>();
           const allLanguages = new Set<string>();
-          const allDifficulties = new Set<string>();
           repos.forEach((repo: any) => {
             (repo.topics || []).forEach((topic: string) =>
               allSkills.add(topic)
@@ -175,11 +165,9 @@ export default function ExplorePage() {
             (repo.language || []).forEach
               ? repo.language.forEach((lang: string) => allLanguages.add(lang))
               : allLanguages.add(repo.language);
-            if (repo.difficulty) allDifficulties.add(repo.difficulty);
           });
           setSkills(Array.from(allSkills));
           setLanguages(Array.from(allLanguages));
-          setDifficulties(Array.from(allDifficulties));
         }
       } catch (error) {
         console.error("Error fetching repositories:", error);
@@ -192,10 +180,10 @@ export default function ExplorePage() {
     getToken,
     searchQuery,
     selectedSkills,
-    selectedDifficulty,
     selectedLanguage,
     selectedActivity,
     sortBy,
+    page,
   ]);
 
   const toggleSkill = (skill: string) => {
@@ -250,24 +238,6 @@ export default function ExplorePage() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-4">
-          <Select
-            value={selectedDifficulty}
-            onValueChange={setSelectedDifficulty}
-          >
-            <SelectTrigger className="w-40">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Difficulty" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Levels</SelectItem>
-              {difficulties.map((difficulty) => (
-                <SelectItem key={difficulty} value={difficulty}>
-                  {difficulty}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Language" />
@@ -302,7 +272,7 @@ export default function ExplorePage() {
               <Badge
                 key={`skill-filter-${skill}-${idx}`}
                 variant={selectedSkills.includes(skill) ? "default" : "outline"}
-                className="cursor-pointer hover:bg-primary/80"
+                className="cursor-pointer hover:border-cyan-700"
                 onClick={() => toggleSkill(skill)}
               >
                 {skill}
@@ -313,7 +283,6 @@ export default function ExplorePage() {
 
         {/* Active Filters */}
         {(selectedSkills.length > 0 ||
-          selectedDifficulty ||
           selectedLanguage ||
           selectedActivity !== "all") && (
           <div className="flex items-center gap-2">
@@ -330,15 +299,6 @@ export default function ExplorePage() {
                 {skill} ×
               </Badge>
             ))}
-            {selectedDifficulty && (
-              <Badge
-                variant="secondary"
-                className="cursor-pointer"
-                onClick={() => setSelectedDifficulty("")}
-              >
-                {selectedDifficulty} ×
-              </Badge>
-            )}
             {selectedLanguage && (
               <Badge
                 variant="secondary"
@@ -363,7 +323,6 @@ export default function ExplorePage() {
               onClick={() => {
                 setSearchQuery("");
                 setSelectedSkills([]);
-                setSelectedDifficulty("");
                 setSelectedLanguage("");
                 setSelectedActivity("all");
               }}
@@ -382,11 +341,11 @@ export default function ExplorePage() {
       </div>
 
       {/* Repository Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
         {repositories.map((repo) => (
           <Card
             key={repo.id}
-            className="hover:shadow-lg transition-shadow bg-card border-border/110 backdrop-blur supports-[backdrop-filter]:bg-card/95"
+            className="hover:shadow-[0_0_24px_4px_rgba(34,211,238,0.4)] transition-shadow bg-card border-border/110 backdrop-blur supports-[backdrop-filter]:bg-card/95"
           >
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -399,26 +358,9 @@ export default function ExplorePage() {
                     {repo.description}
                   </CardDescription>
                 </div>
-                <Badge className={getDifficultyBadgeClass(repo.difficulty)}>
-                  {repo.difficulty}
-                </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Score-based tag */}
-              <div className="flex gap-2 mb-2">
-                {typeof repo.score === "number" && (
-                  <Badge variant="secondary" className="text-xs">
-                    Difficulty Rating: {repo.score}
-                  </Badge>
-                )}
-                {repo.difficulty && (
-                  <Badge variant="outline" className="text-xs">
-                    {repo.difficulty}
-                  </Badge>
-                )}
-              </div>
-
               {/* Stats */}
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -521,6 +463,39 @@ export default function ExplorePage() {
         ))}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-10">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-1 rounded bg-gray-800 text-gray-200 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 rounded ${
+                page === i + 1
+                  ? "bg-cyan-600 text-white"
+                  : "bg-gray-700 text-gray-200"
+              } transition-colors`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3 py-1 rounded bg-gray-800 text-gray-200 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Empty State */}
       {repositories.length === 0 && (
         <div className="text-center py-12">
@@ -536,7 +511,6 @@ export default function ExplorePage() {
             onClick={() => {
               setSearchQuery("");
               setSelectedSkills([]);
-              setSelectedDifficulty("");
               setSelectedLanguage("");
               setSelectedActivity("all");
             }}

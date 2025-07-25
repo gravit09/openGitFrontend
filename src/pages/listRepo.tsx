@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Navbar from "@/components/custom/Navbar";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import {
   Dialog,
@@ -204,6 +205,7 @@ const Repositories = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <Navbar />
       <div className="container mx-auto px-6 py-12">
         <div className="flex justify-between items-center mb-8">
           <div>
