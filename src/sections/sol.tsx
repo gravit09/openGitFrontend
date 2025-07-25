@@ -50,7 +50,7 @@ function sol() {
   ];
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-gray-950 via-black to-gray-900">
+    <section className="py-20 px-6 bg-gradient-to-br from-gray-950 via-black to-gray-900 landing-bg">
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center space-x-3 mb-4">

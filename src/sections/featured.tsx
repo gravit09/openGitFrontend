@@ -38,7 +38,7 @@ function featured() {
   ];
 
   return (
-    <section id="repositories" className="py-20 px-6 bg-gray-950">
+    <section id="repositories" className="py-10 px-6 bg-gray-950 landing-bg">
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4 text-white">
@@ -53,7 +53,7 @@ function featured() {
           {featuredRepos.map((repo, index) => (
             <Card
               key={index}
-              className="bg-gray-900 border-gray-700 hover:bg-gray-800 transition-all duration-300 hover:scale-105"
+              className="bg-cyan-900 border-cyan-100 hover:bg-cyan-600 transition-all duration-300 hover:scale-105"
             >
               <CardHeader>
                 <div className="flex items-center justify-between">

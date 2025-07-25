@@ -5,7 +5,7 @@ import { Github } from "lucide-react";
 
 function stats() {
   return (
-    <section className="py-20 px-6 bg-gray-950">
+    <section className="px-6 pb-20 bg-gray-950">
       <div className="container mx-auto">
         <div className="grid md:grid-cols-4 gap-6 mb-12">
           <Card className="bg-gray-900/30 border-gray-700 text-center backdrop-blur-sm">
