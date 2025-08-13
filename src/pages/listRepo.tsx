@@ -69,9 +69,19 @@ const Repositories = () => {
             stars: repo.stars || 0,
             forks: repo.forks || 0,
             url: repo.githubUrl || repo.url,
-            dateAdded: new Date(repo.createdAt || repo.dateAdded)
-              .toISOString()
-              .split("T")[0],
+            dateAdded: (() => {
+              const dateValue = repo.createdAt || repo.dateAdded;
+              if (!dateValue) return "";
+              try {
+                const date = new Date(dateValue);
+                return isNaN(date.getTime())
+                  ? ""
+                  : date.toISOString().split("T")[0];
+              } catch (error) {
+                console.warn("Invalid date value:", dateValue);
+                return "";
+              }
+            })(),
           }));
           setRepositories(transformedData);
         }
@@ -204,12 +214,20 @@ const Repositories = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-black via-gray-900 to-black text-white">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-16 -left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 -right-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl"></div>
+      </div>
       <Navbar />
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 py-12 relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-4">Repository Dashboard</h1>
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs mb-3">
+              Dashboard
+            </div>
+            <h1 className="text-4xl font-bold mb-2">Repository Dashboard</h1>
             <p className="text-gray-400">
               Manage open source repositories on the platform
             </p>
@@ -217,12 +235,12 @@ const Repositories = () => {
 
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-white">
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Repository
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700">
+            <DialogContent className="bg-gray-900/90 backdrop-blur border border-gray-700/60">
               <DialogHeader>
                 <DialogTitle className="text-white">
                   Add New Repository
@@ -239,7 +257,7 @@ const Repositories = () => {
                     onChange={(e) =>
                       setNewRepo({ ...newRepo, name: e.target.value })
                     }
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-gray-900/50 border border-gray-700/60 text-white backdrop-blur-sm"
                     placeholder="e.g., react"
                   />
                 </div>
@@ -253,7 +271,7 @@ const Repositories = () => {
                     onChange={(e) =>
                       setNewRepo({ ...newRepo, url: e.target.value })
                     }
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-gray-900/50 border border-gray-700/60 text-white backdrop-blur-sm"
                     placeholder="https://github.com/user/repo"
                   />
                 </div>
@@ -267,13 +285,13 @@ const Repositories = () => {
                     onChange={(e) =>
                       setNewRepo({ ...newRepo, description: e.target.value })
                     }
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-gray-900/50 border border-gray-700/60 text-white backdrop-blur-sm"
                     placeholder="Brief description of the repository"
                   />
                 </div>
                 <Button
                   onClick={handleAddRepository}
-                  className="w-full bg-white"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                   disabled={addLoading}
                 >
                   {addLoading ? <span>Adding...</span> : "Add Repository"}
@@ -283,7 +301,7 @@ const Repositories = () => {
           </Dialog>
         </div>
 
-        <Card className="bg-gray-900/30 border-gray-700 mb-8">
+        <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 border border-gray-700/60 backdrop-blur mb-8">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Search className="h-5 w-5" />
@@ -295,12 +313,12 @@ const Repositories = () => {
               placeholder="Search by name, description, or language..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-800 border-gray-600 text-white"
+              className="bg-gray-900/50 border border-gray-700/60 text-white backdrop-blur-sm"
             />
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900/30 border-gray-700">
+        <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 border border-gray-700/60 backdrop-blur">
           <CardHeader>
             <CardTitle className="text-white">
               Listed Repositories ({repositories.length})
@@ -315,7 +333,7 @@ const Repositories = () => {
               <>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-gray-700">
+                    <TableRow className="border-gray-800">
                       <TableHead className="text-gray-300">
                         Repository
                       </TableHead>
@@ -328,7 +346,10 @@ const Repositories = () => {
                   </TableHeader>
                   <TableBody>
                     {repositories.map((repo) => (
-                      <TableRow key={repo.id} className="border-gray-700">
+                      <TableRow
+                        key={repo.id}
+                        className="border-gray-800 hover:bg-cyan-500/5"
+                      >
                         <TableCell>
                           <div className="flex items-start gap-3">
                             <Github className="h-5 w-5 text-gray-400 mt-1" />
@@ -343,7 +364,7 @@ const Repositories = () => {
                                 href={repo.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-xs text-purple-400 hover:text-purple-300"
+                                className="text-xs text-cyan-300 hover:text-cyan-200"
                               >
                                 {repo.url}
                               </a>

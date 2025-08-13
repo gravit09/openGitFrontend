@@ -15,8 +15,8 @@ export function Safari({
   imageSrc,
   videoSrc,
   url,
-  width = 1310,
-  height = 753,
+  width = 1200,
+  height = 1200,
   mode = "default",
   ...props
 }: SafariProps) {
@@ -140,7 +140,7 @@ export function Safari({
         {imageSrc && (
           <image
             href={imageSrc}
-            width="1030"
+            width="600"
             height="640"
             x="1"
             y="20"
