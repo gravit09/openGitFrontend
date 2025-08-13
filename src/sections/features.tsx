@@ -13,6 +13,12 @@ import {
 export function FeaturesSection() {
   const features = [
     {
+      title: "List your repository",
+      description:
+        "Publish your repo on OpenGit and get matched with active contributors.",
+      icon: <IconGitBranch className="h-6 w-6 text-cyan-400" />,
+    },
+    {
       title: "Discover great repositories",
       description:
         "Find trending, high‑quality projects across ecosystems with powerful filters.",
@@ -52,11 +58,6 @@ export function FeaturesSection() {
       title: "Star and track favorites",
       description: "Save repos, get signals, and never miss important updates.",
       icon: <IconStar className="h-6 w-6 text-cyan-400" />,
-    },
-    {
-      title: "Global and open",
-      description: "Built for the worldwide OSS community—access for everyone.",
-      icon: <IconWorld className="h-6 w-6 text-cyan-400" />,
     },
   ];
   return (

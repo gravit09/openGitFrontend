@@ -472,19 +472,81 @@ export default function ExplorePage() {
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`px-3 py-1 rounded border ${
-                  page === i + 1
-                    ? "border-cyan-500/60 bg-cyan-500/10 text-cyan-200"
-                    : "border-gray-700/50 bg-gray-900/50 text-gray-200 hover:border-cyan-500/30"
-                } transition-colors`}
-              >
-                {i + 1}
-              </button>
-            ))}
+
+            {(() => {
+              const windowSize = 5;
+              const start =
+                Math.floor((page - 1) / windowSize) * windowSize + 1;
+              const end = Math.min(start + windowSize - 1, totalPages);
+              const buttons = [] as JSX.Element[];
+
+              // Show first + ellipsis if window not starting at 1
+              if (start > 1) {
+                buttons.push(
+                  <button
+                    key={1}
+                    onClick={() => setPage(1)}
+                    className={`px-3 py-1 rounded border ${
+                      page === 1
+                        ? "border-cyan-500/60 bg-cyan-500/10 text-cyan-200"
+                        : "border-gray-700/50 bg-gray-900/50 text-gray-200 hover:border-cyan-500/30"
+                    } transition-colors`}
+                  >
+                    1
+                  </button>
+                );
+                if (start > 2) {
+                  buttons.push(
+                    <span key="start-ellipsis" className="px-2 text-gray-400">
+                      …
+                    </span>
+                  );
+                }
+              }
+
+              for (let i = start; i <= end; i++) {
+                buttons.push(
+                  <button
+                    key={i}
+                    onClick={() => setPage(i)}
+                    className={`px-3 py-1 rounded border ${
+                      page === i
+                        ? "border-cyan-500/60 bg-cyan-500/10 text-cyan-200"
+                        : "border-gray-700/50 bg-gray-900/50 text-gray-200 hover:border-cyan-500/30"
+                    } transition-colors`}
+                  >
+                    {i}
+                  </button>
+                );
+              }
+
+              // Show ellipsis + last if window not ending at totalPages
+              if (end < totalPages) {
+                if (end < totalPages - 1) {
+                  buttons.push(
+                    <span key="end-ellipsis" className="px-2 text-gray-400">
+                      …
+                    </span>
+                  );
+                }
+                buttons.push(
+                  <button
+                    key={totalPages}
+                    onClick={() => setPage(totalPages)}
+                    className={`px-3 py-1 rounded border ${
+                      page === totalPages
+                        ? "border-cyan-500/60 bg-cyan-500/10 text-cyan-200"
+                        : "border-gray-700/50 bg-gray-900/50 text-gray-200 hover:border-cyan-500/30"
+                    } transition-colors`}
+                  >
+                    {totalPages}
+                  </button>
+                );
+              }
+
+              return buttons;
+            })()}
+
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}

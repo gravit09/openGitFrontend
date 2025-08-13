@@ -11,6 +11,7 @@ import SignInPage from "./components/custom/SignInPage";
 import SignUpPage from "./components/custom/SignUpPage";
 import ListRepoPage from "./pages/listRepo";
 import TopContributorsPage from "./pages/TopContributors";
+import Community from "./pages/Community";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -45,6 +46,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <TopContributorsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+              <ProtectedRoute>
+                <Community />
               </ProtectedRoute>
             }
           />

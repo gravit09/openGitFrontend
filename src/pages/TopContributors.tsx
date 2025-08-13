@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -18,27 +18,45 @@ export default function TopContributorsPage() {
   const [contributors, setContributors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
+  const apiBase = useMemo(
+    () => (import.meta as any).env?.VITE_API_URL || "http://localhost:4000",
+    []
+  );
+
   useEffect(() => {
     const fetchContributors = async () => {
       setLoading(true);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
       try {
-        const token = await getToken();
-        const res = await fetch(
-          "http://localhost:4000/api/repo/top-contributors",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        const token = await getToken().catch(() => null);
+        const headers: Record<string, string> = {};
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const res = await fetch(`${apiBase}/api/repo/top-contributors`, {
+          headers,
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          // Graceful fallback
+          setContributors([]);
+          return;
+        }
+        const data = await res.json().catch(() => ({}));
+        setContributors(
+          Array.isArray(data.contributors) ? data.contributors : []
         );
-        const data = await res.json();
-        setContributors(data.contributors || []);
       } catch (err) {
+        // Network/timeout fallback
         setContributors([]);
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     };
     fetchContributors();
-  }, []);
+  }, [getToken, apiBase]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl bg-background text-foreground min-h-screen">

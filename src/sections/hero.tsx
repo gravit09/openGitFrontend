@@ -138,11 +138,11 @@ function Hero() {
           variants={itemVariants}
           className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed"
         >
-          Connect with projects you love. Contribute for fun, learning, and
-          impact.
+          Discover projects to contribute to and list your own repositories to
+          attract contributors.
           <br />
           <span className="text-cyan-400 font-medium">
-            Where passion meets open source collaboration.
+            OpenGit connects contributors and maintainers in one place.
           </span>
         </motion.p>
 
@@ -166,6 +166,7 @@ function Hero() {
           <Button
             size="lg"
             variant="outline"
+            onClick={() => navigate("/dash")}
             className="group border-2 border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-400 text-lg px-8 py-4 rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
           >
             <span className="flex items-center">

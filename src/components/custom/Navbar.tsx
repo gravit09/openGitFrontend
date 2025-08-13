@@ -37,8 +37,10 @@ export default function Floatingnavbar() {
           size="icon"
           className="rounded-full hover:bg-cyan-500/20 hover:text-cyan-300"
         >
-          <MessageSquare className="h-5 w-5" />
-          <span className="sr-only">Messages</span>
+          <Link to="/community">
+            <MessageSquare className="h-5 w-5" />
+            <span className="sr-only">Messages</span>
+          </Link>
         </Button>
         <Button
           variant="ghost"
